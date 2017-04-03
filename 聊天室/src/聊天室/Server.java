@@ -1,20 +1,19 @@
 package ¡ƒÃÏ “;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
-import javax.swing.text.AbstractDocument.BranchElement;
 
 public class Server {
 	BufferedReader br;
 	PrintWriter w;
+	ArrayList<PrintWriter> clientOutputStreams;
 	public static void main(String[] Args){
 		new Server().go();
 	}
@@ -37,25 +36,24 @@ public class Server {
 				managerthread.run();
 			}
 		}
-		catch(IOException e){
+		catch(Exception e){
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public class manager implements Runnable{
-		String message;
 		public void run() {
 			try{
+				String message;
 				while((message=br.readLine())!=null){
 					System.out.println(message);
-					w.write(message);
+					w.println(message);
 					w.flush();
 				}
 			}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

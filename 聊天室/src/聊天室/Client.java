@@ -5,13 +5,11 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -56,7 +54,7 @@ public class Client {
 			 * 所以这里不用stream而用reader。但读进来的是stream所以要用InputStreamReader转换成字符型
 			 */
 		}
-		catch(IOException e){
+		catch(Exception e){
 			e.printStackTrace();
 		}
 	}
@@ -75,13 +73,14 @@ public class Client {
 		public void run() {
 			String message;             
 	           try {
-	             while ((message = br.readLine()) != null) {                        
+	             while ((message = br.readLine()) != null) { 
+	            	//readline读到换行符才算读到一行,而且还需要flush()或close()。因为输入流缓冲区不满，他是不会接收到数据的
 	                System.out.println("read " + message);
 	                ta.append(message + "\n");
 	             }
 	           }
-	           catch(Exception ex) {
-	        	   ex.printStackTrace();
+	           catch(Exception e) {
+	        	   e.printStackTrace();
 	           }
 		}
 	}

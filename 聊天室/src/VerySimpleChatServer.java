@@ -54,7 +54,7 @@ public class VerySimpleChatServer {
        while(true) {
           Socket clientSocket = serverSock.accept();
           PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());         
-          clientOutputStreams.add(writer);
+          clientOutputStreams.add(writer);//”– ≤√¥”√
 
        Thread t = new Thread(new ClientHandler(clientSocket));
        t.start();
