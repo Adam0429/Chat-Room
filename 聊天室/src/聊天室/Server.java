@@ -25,15 +25,9 @@ public class Server {
 			ServerSocket ss=new ServerSocket(8887);//ServerSocket会监听客户端对这台机器在8888端口上的要求
 			while(true){
 				Socket s=ss.accept();//accept会停下来等到要求到达才会继续
-				InputStreamReader is=new InputStreamReader(s.getInputStream());
-				br=new BufferedReader(is);
-				w=new PrintWriter(s.getOutputStream());//Java.io.PrintWriter 类打印格式化对象的表示到文本输出流。
 				JOptionPane.showMessageDialog(null, "连接成功！");
-				String string="--------已进入聊天室--------";
-				w.println(string);//bufferedreader类的必须要回车和flush或close才能接受
-				w.flush();
-				Thread managerthread=new Thread(new manager()); 
-				managerthread.run();
+				Thread thread=new Thread(new HandleAClient(s)); 
+				thread.run();
 			}
 		}
 		catch(Exception e){
@@ -41,11 +35,25 @@ public class Server {
 		}
 	}
 	
-	public class manager implements Runnable{
+	public class HandleAClient implements Runnable{
+		Socket s;
+		public HandleAClient(Socket socket){
+			this.s=socket;
+			try{
+				InputStreamReader is=new InputStreamReader(s.getInputStream());
+				br=new BufferedReader(is);
+				w=new PrintWriter(s.getOutputStream());//Java.io.PrintWriter 类打印格式化对象的表示到文本输出流。
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		public void run() {
 			try{
+				w.println(s.getInetAddress()+"--------已进入聊天室--------");//bufferedreader类的必须要回车和flush或close才能接受
+				w.flush();
 				String message;
-				while((message=br.readLine())!=null){
+				while((message=br.readLine())!=null){	//关闭client会有报错 java.net.SocketException: Connection reset
 					System.out.println(message);
 					w.println(message);
 					w.flush();

@@ -6,12 +6,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 public class Client {
 	JFrame f;
@@ -20,6 +23,7 @@ public class Client {
 	JButton b;
 	BufferedReader br;
 	PrintWriter pw;
+	Socket s;
 	public static void main(String[] Args){
 		new Client().go();
 		
@@ -29,6 +33,12 @@ public class Client {
 		tf=new JTextField();
 		ta=new JTextArea();
 		b=new JButton("发送");
+		ta.setLineWrap(true);
+        ta.setWrapStyleWord(true);
+        ta.setEditable(false);
+        //JScrollPane qScroller = new JScrollPane(tf);
+        //qScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        //qScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		f.setSize(450, 400);
 		f.setLayout(null);
 		b.setBounds(270,300,90,30);
@@ -43,7 +53,7 @@ public class Client {
 	}
 	public void go(){
 		try{
-			Socket s=new Socket("localhost",8887);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
+			s=new Socket("localhost",8887);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
 			InputStreamReader is=new InputStreamReader(s.getInputStream());			
 			br=new BufferedReader(is);
 			pw=new PrintWriter(s.getOutputStream());
