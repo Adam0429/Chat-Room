@@ -53,7 +53,7 @@ public class Client {
 	}
 	public void go(){
 		try{
-			s=new Socket("localhost",8887);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
+			s=new Socket("127.0.0.1", 8888);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
 			InputStreamReader is=new InputStreamReader(s.getInputStream());			
 			br=new BufferedReader(is);
 			pw=new PrintWriter(s.getOutputStream());
@@ -93,5 +93,6 @@ public class Client {
 	        	   e.printStackTrace();
 	           }
 		}
+		
 	}
 }
