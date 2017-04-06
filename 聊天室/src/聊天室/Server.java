@@ -17,11 +17,13 @@ import java.util.Iterator;
 import javax.print.attribute.standard.Severity;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Server {
 	ArrayList<PrintWriter> clientOutputStreams;
+	int count;
 	public static void main(String[] Args){
 		Server server=new Server();
 	}
@@ -39,6 +41,7 @@ public class Server {
 		jf.setVisible(true);
 		jf.setSize(400, 80);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		count=0;
 	}
 	public void go(){
 		clientOutputStreams = new ArrayList<PrintWriter>();
@@ -51,6 +54,8 @@ public class Server {
 				clientOutputStreams.add(w);
 				//JOptionPane.showMessageDialog(null, "连接成功！");
 				w.println(s.getInetAddress()+"加入群聊");
+				count++;
+				w.println("现在有"+count+"人在群聊");
 				w.flush();
 				Thread thread=new Thread(new HandleAClient(s)); 
 				thread.start();//如果有新的socket加进来，就为其多开一个线程
@@ -71,7 +76,7 @@ public class Server {
 	
 	public class blistener2 implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
-			go();
+			//	
 		}
 		
 	}
@@ -92,6 +97,7 @@ public class Server {
 			String message;
 			try{
 				//bufferedreader类的必须要回车和flush或close才能接受
+				;
 				while((message=br.readLine())!=null){
 					System.out.println(message);
 					tellEveryone(message);
