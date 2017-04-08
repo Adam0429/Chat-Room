@@ -25,6 +25,7 @@ public class Client {
 	JTextField tf;
 	JTextArea ta;
 	JButton b;
+	JButton b2;
 	JScrollPane qScroller;
 	BufferedReader br;
 	PrintWriter pw;
@@ -38,28 +39,32 @@ public class Client {
 		tf=new JTextField();
 		ta=new JTextArea(10,20);
 		b=new JButton("发送");
+		b2=new JButton("我错了");
 		ta.setLineWrap(true);//激活自动换行功能 			
         ta.setWrapStyleWord(true);// 激活断行不断字功能	
         ta.setEditable(false);	
         qScroller = new JScrollPane(ta);
         qScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         qScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		f.setSize(450, 400);
+		f.setSize(450, 450);
 		f.setLayout(null);
 		b.setBounds(270,300,90,30);
+		b2.setBounds(270,340,90,30);
 		b.addActionListener(new MyButton());
+		b2.addActionListener(new MyButton2());
 		qScroller.setBounds(50,50,300,230);
 		//ta.setBounds(50,50,300,230);	
 		tf.setBounds(50,300,200,20);
 		f.add(qScroller);
 		f.add(tf);
 		f.add(b);
+		f.add(b2);
 		f.setVisible(true);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	public void go(){
 		try{
-			s=new Socket("139.199.39.213", 8888);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
+			s=new Socket("139.199.94.77", 8888);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
 			InputStreamReader is=new InputStreamReader(s.getInputStream());			
 			br=new BufferedReader(is);
 			pw=new PrintWriter(s.getOutputStream());
@@ -93,6 +98,21 @@ public class Client {
 		}
 	}
 	
+	public class MyButton2 implements ActionListener{
+
+		public void actionPerformed(ActionEvent arg0) {
+			String ip;
+			try {
+				ip = InetAddress.getLocalHost().getHostAddress();
+				pw.println(ip+"说:"+"我错了");
+				pw.flush();
+				tf.requestFocus();//光标进入这个控件中
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
+
+		}
+	}
 	public class incomingReader implements Runnable{
 		public void run() {
 			String message;             
