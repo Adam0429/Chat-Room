@@ -36,7 +36,7 @@ public class Clientxyd {
 	PrintWriter pw;
 	Socket s;
 	public static void main(String[] Args){
-		new Client().go();
+		new Clientxyd().go();
 		
 	}
 	public Clientxyd(){
@@ -166,7 +166,6 @@ public class Clientxyd {
 		public void windowClosing(WindowEvent e) {
 			pw.println("笛笛"+"下线了");
 			pw.flush();
-			tf.requestFocus();//光标进入这个控件中
 		}
 
 		@Override

@@ -36,7 +36,7 @@ public class Clientwfh {
 	PrintWriter pw;
 	Socket s;
 	public static void main(String[] Args){
-		new Client().go();
+		new Clientwfh().go();
 		
 	}
 	public Clientwfh(){
@@ -92,14 +92,12 @@ public class Clientwfh {
 
 		public void actionPerformed(ActionEvent arg0) {
 			String string=tf.getText();
-			String ip;
 			try {
-				ip = InetAddress.getLocalHost().getHostAddress();
 				pw.println("鸿鸿"+"说:"+string);
 				pw.flush();
 				tf.setText("");
 				tf.requestFocus();//光标进入这个控件中
-			} catch (UnknownHostException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -108,13 +106,11 @@ public class Clientwfh {
 	public class MyButton2 implements ActionListener{
 
 		public void actionPerformed(ActionEvent arg0) {
-			String ip;
 			try {
-				ip = InetAddress.getLocalHost().getHostAddress();
 				pw.println("鸿鸿"+"说:"+"要吃笛笛小奶奶");
 				pw.flush();
 				tf.requestFocus();//光标进入这个控件中
-			} catch (UnknownHostException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
