@@ -33,6 +33,7 @@ public class Server {
 	int count;
 	public static void main(String[] Args){
 		Server server=new Server();
+		server.go();
 	}
 	public Server(){
 		file =new File("C:/Users/wfh/Desktop/聊天记录.txt");//不是这条指令指定创建文件
@@ -63,6 +64,7 @@ public class Server {
 			while(true){
 				Socket s=ss.accept();//accept会停下来等到要求到达才会继续.
 				System.out.println("hello");
+				System.out.println("加进来了一个");
 				PrintWriter w=new PrintWriter(s.getOutputStream());
 				clientOutputStreams.add(w);
 				//JOptionPane.showMessageDialog(null, "连接成功！");
@@ -108,8 +110,9 @@ public class Server {
 			String message;
 			try{
 				//bufferedreader类的必须要回车和flush或close才能接受
-				;
 				while((message=br.readLine())!=null){
+					/*实际上readLine()是一个阻塞函数，当没有数据读取时，就一直会阻塞在那，而不是返回null
+					readLine()只有在数据流发生异常或者另一端被close()掉时，才会返回null值*/
 					System.out.println(message);
 					tellEveryone(message);
 					
