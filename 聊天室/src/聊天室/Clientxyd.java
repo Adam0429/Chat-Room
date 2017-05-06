@@ -111,7 +111,7 @@ public class Clientxyd {
 			String ip;
 			try {
 				ip = InetAddress.getLocalHost().getHostAddress();
-				pw.println("笛笛"+"说:"+"笛笛想被插插了...");
+				pw.println("笛笛"+"说:"+"//不可描述的内容");
 				pw.flush();
 				tf.requestFocus();//光标进入这个控件中
 			} catch (UnknownHostException e) {

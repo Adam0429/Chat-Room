@@ -19,6 +19,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.JMenuBar;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JToggleButton;
 
 public class Client {
 	JFrame f;
@@ -47,18 +50,18 @@ public class Client {
         qScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         qScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		f.setSize(450, 450);
-		f.setLayout(null);
+		f.getContentPane().setLayout(null);
 		b.setBounds(270,300,90,30);
-		b2.setBounds(270,340,90,30);
+		b2.setBounds(50,340,310,30);
 		b.addActionListener(new MyButton());
 		b2.addActionListener(new MyButton2());
 		qScroller.setBounds(50,50,300,230);
 		//ta.setBounds(50,50,300,230);	
 		tf.setBounds(50,300,200,20);
-		f.add(qScroller);
-		f.add(tf);
-		f.add(b);
-		f.add(b2);
+		f.getContentPane().add(qScroller);
+		f.getContentPane().add(tf);
+		f.getContentPane().add(b);
+		f.getContentPane().add(b2);
 		f.setVisible(true);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}

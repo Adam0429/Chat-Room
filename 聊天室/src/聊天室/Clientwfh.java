@@ -107,7 +107,7 @@ public class Clientwfh {
 
 		public void actionPerformed(ActionEvent arg0) {
 			try {
-				pw.println("鸿鸿"+"说:"+"要吃笛笛小奶奶");
+				pw.println("鸿鸿"+"说:"+"//不可描述的内容");
 				pw.flush();
 				tf.requestFocus();//光标进入这个控件中
 			} catch (Exception e) {

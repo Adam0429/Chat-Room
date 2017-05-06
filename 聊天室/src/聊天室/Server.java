@@ -33,7 +33,7 @@ public class Server {
 	int count;
 	public static void main(String[] Args){
 		Server server=new Server();
-		server.go();
+		//server.go();
 	}
 	public Server(){
 		file =new File("C:/Users/wfh/Desktop/聊天记录.txt");//不是这条指令指定创建文件
