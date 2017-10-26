@@ -11,6 +11,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.security.auth.callback.TextOutputCallback;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,6 +34,8 @@ public class Client {
 	BufferedReader br;
 	PrintWriter pw;
 	Socket s;
+	private JTextField tf2;
+	private JTextField textField_1;
 	public static void main(String[] Args){
 		new Client().go();
 		
@@ -41,8 +44,8 @@ public class Client {
 		f=new JFrame("聊天室");
 		tf=new JTextField();
 		ta=new JTextArea(10,20);
-		b=new JButton("发送");
-		b2=new JButton("我错了");
+		b=new JButton("\u7FA4\u53D1");
+		b2=new JButton("\u79C1\u804A");
 		ta.setLineWrap(true);//激活自动换行功能 			
         ta.setWrapStyleWord(true);// 激活断行不断字功能	
         ta.setEditable(false);	
@@ -51,23 +54,41 @@ public class Client {
         qScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		f.setSize(450, 450);
 		f.getContentPane().setLayout(null);
-		b.setBounds(270,300,90,30);
-		b2.setBounds(50,340,310,30);
+		b.setBounds(273,340,90,30);
+		b2.setBounds(273,307,90,30);
 		b.addActionListener(new MyButton());
 		b2.addActionListener(new MyButton2());
-		qScroller.setBounds(50,50,300,230);
+		qScroller.setBounds(14,50,278,230);
 		//ta.setBounds(50,50,300,230);	
-		tf.setBounds(50,300,200,20);
+		tf.setBounds(56,345,200,20);
 		f.getContentPane().add(qScroller);
 		f.getContentPane().add(tf);
 		f.getContentPane().add(b);
 		f.getContentPane().add(b2);
+		
+		tf2 = new JTextField();
+		tf2.setBounds(78, 312, 178, 20);
+		f.getContentPane().add(tf2);
+		
+		textField_1 = new JTextField();
+		textField_1.setText("192.168.1.1");
+		textField_1.setBounds(306, 50, 112, 238);
+		f.getContentPane().add(textField_1);
+		textField_1.setColumns(10);
+		
+		JLabel lblNewLabel = new JLabel("\u79C1\u804A\u5BF9\u8C61:");
+		lblNewLabel.setBounds(0, 313, 72, 18);
+		f.getContentPane().add(lblNewLabel);
+		
+		JLabel label = new JLabel("\u5185\u5BB9\uFF1A");
+		label.setBounds(0, 346, 72, 18);
+		f.getContentPane().add(label);
 		f.setVisible(true);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	public void go(){
 		try{
-			s=new Socket("localhost", 8888);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
+			s=new Socket("139.199.94.77", 8888);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
 			InputStreamReader is=new InputStreamReader(s.getInputStream());			
 			br=new BufferedReader(is);
 			pw=new PrintWriter(s.getOutputStream());
@@ -87,10 +108,10 @@ public class Client {
 
 		public void actionPerformed(ActionEvent arg0) {
 			String string=tf.getText();
-			String ip;
+			String from;
 			try {
-				ip = InetAddress.getLocalHost().getHostAddress();
-				pw.println(ip+"说:"+string);
+				from = InetAddress.getLocalHost().getHostAddress();
+				pw.println(from+"说:"+string);
 				pw.flush();
 				tf.setText("");
 				tf.requestFocus();//光标进入这个控件中
@@ -104,10 +125,12 @@ public class Client {
 	public class MyButton2 implements ActionListener{
 
 		public void actionPerformed(ActionEvent arg0) {
-			String ip;
+			String string=tf.getText();
+			String to=tf2.getText();
+			String from;
 			try {
-				ip = InetAddress.getLocalHost().getHostAddress();
-				pw.println(ip+"说:"+"我错了");
+				from = InetAddress.getLocalHost().getHostAddress();
+				pw.println(from+"aaa"+string+"aaa"+to);//到server里check一下是私聊还是广播
 				pw.flush();
 				tf.requestFocus();//光标进入这个控件中
 			} catch (UnknownHostException e) {
