@@ -1,21 +1,12 @@
 package 聊天室;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.WriteAbortedException;
-import java.io.Writer;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -23,62 +14,98 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import javax.print.attribute.standard.Severity;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.omg.PortableInterceptor.USER_EXCEPTION;
+import javax.swing.JTextField;
+import javax.swing.JScrollBar;
+
 
 public class Server {
 	File file;
-//	PrintWriter pw;//输入文件用的
 	HashMap<String, PrintWriter> clientOutputStreams;
 	ArrayList<String> clients;
 	int count;
+	private static JTextField textField;
+	private JTextField textField_1;
+	JFrame jf;
+	JPanel panel;
+	String IPlist;
+	JButton b;
+	
 	public static void main(String[] Args){
 		Server server=new Server();
 		//server.go();
 	}
 	public Server(){
+		IPlist ="";
 		clients = new ArrayList<String>();
-//		file =new File("C:/Users/wfh/Desktop/聊天记录.txt");//不是这条指令指定创建文件
-//		try {
-//			pw = new PrintWriter(new FileWriter(file));//如果file不存在则创建
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		JFrame jf=new JFrame("Server");
-		JPanel panel=new JPanel();
-		JPanel panel2=new JPanel();
-		JButton b=new JButton("启动");//因为启动执行的是线程,线程会一直跑,所以按钮会卡住
-		JButton b2=new JButton("停止");//因为启动会卡主，所以停止也不能用了，放这里装样子
+
+		jf=new JFrame("Server");
+		panel=new JPanel();
+		b=new JButton("启动");
+		b.setBounds(42, 43, 63, 27);
 		b.addActionListener(new blistener());
-		panel.add(BorderLayout.CENTER,b);
-		panel.add(BorderLayout.CENTER,b2);
+		panel.setLayout(null);
+		panel.add(b);
 		jf.getContentPane().add(BorderLayout.CENTER,panel);
-		jf.getContentPane().add(BorderLayout.EAST, panel2);
+		
+		textField = new JTextField();
+		textField.setBounds(216, 43, 139, 239);
+		
+		panel.add(textField);
+		textField.setColumns(10);
+		JButton btnNewButton = new JButton("Kick");
+		btnNewButton.setBounds(31, 201, 139, 27);
+		panel.add(btnNewButton);
+		
+		textField_1 = new JTextField();
+		textField_1.setBounds(31, 151, 139, 24);
+		panel.add(textField_1);
+		textField_1.setColumns(10);
+		
+		JScrollBar scrollBar = new JScrollBar();
+		scrollBar.setBounds(312, 151, 21, 48);
+		panel.add(scrollBar);
+		
+		JLabel lblNewLabel = new JLabel("IP online");
+		lblNewLabel.setBounds(216, 13, 72, 18);
+		panel.add(lblNewLabel);
 		jf.setVisible(true);
-		jf.setSize(400, 80);
+		jf.setSize(400, 342);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		count=0;
+
 	}
 	public void go(){
-		clientOutputStreams = new HashMap<String, PrintWriter>();
+		clientOutputStreams = new HashMap<String, PrintWriter>();			
+		textField.setText("111");
+		System.out.println("s:"+textField.getText());		//明明有输入但是不显示在textfield上
+
 		try{
 			ServerSocket ss=new ServerSocket(8888);//ServerSocket会监听客户端对这台机器在8888端口上的要求
+
 			while(true){
 				Socket s=ss.accept();//accept会停下来等到要求到达才会继续.
 				System.out.println("加进来了一个");
 				PrintWriter w=new PrintWriter(s.getOutputStream());
 				clientOutputStreams.put(s.getInetAddress().toString().split("/")[1],w);
+				clients.add(s.getInetAddress().toString().split("/")[1]);
 				//JOptionPane.showMessageDialog(null, "连接成功！");
 				w.println(s.getInetAddress().toString().split("/")[1]+"加入群聊");
 				w.flush();
 				HandleAClient hc = new HandleAClient(s);				Thread thread=new Thread(hc); 
 				thread.start();//如果有新的socket加进来，就为其多开一个线程
+				Iterator<String> i = clients.iterator();
+
+				while(i.hasNext()){
+					IPlist = IPlist + i.next()+'\n';
+					System.out.println(IPlist);	
+					
+				}
+
 			}
 		}
 		catch(Exception e){
@@ -94,12 +121,9 @@ public class Server {
 		
 	}
 	
-	public class blistener2 implements ActionListener{
-		public void actionPerformed(ActionEvent e) {
-			//	
-		}
+
 		
-	}
+	
 	public class HandleAClient implements Runnable{
 		Socket s;
 		BufferedReader br;
@@ -125,7 +149,7 @@ public class Server {
 						String strings=message.split("aaa")[1];
 						String to=message.split("aaa")[2];
 						System.out.println(from+"对"+to+"说"+strings);
-						tellSomeone(strings, to);
+						tellSomeone(strings,from ,to);
 					}
 					else{
 						System.out.println(message);
@@ -138,11 +162,17 @@ public class Server {
 			}
 		}
 		
-		public void tellSomeone(String message, String ip){
+		public void tellSomeone(String message, String from, String to){
 			try {
-				PrintWriter writer= clientOutputStreams.get(ip);
-				writer.println(message);
-				writer.flush();
+				PrintWriter fromwriter=clientOutputStreams.get(from);
+				PrintWriter towriter= clientOutputStreams.get(to);
+				
+				towriter.println("from say:"+message);
+				
+				towriter.flush();
+				
+				fromwriter.println("say to "+to+" "+message);
+				fromwriter.flush();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -156,9 +186,6 @@ public class Server {
 		    	 try {
 		             Entry entry = (Entry)it.next();
 		             PrintWriter writer = new PrintWriter((PrintWriter) entry.getValue());//Java.io.PrintWriter 类打印格式化对象的表示到文本输出流。
-//		    		 pw.println(message);//输入到文件里
-//		             pw.flush();
-//		             clients.add(entry.getKey().toString());
 		             System.out.println(entry.getKey().toString());
 					 writer.println(message);
 		             writer.flush();

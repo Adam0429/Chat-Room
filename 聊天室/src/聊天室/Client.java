@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 import javax.security.auth.callback.TextOutputCallback;
 import javax.swing.JButton;
@@ -88,7 +89,7 @@ public class Client {
 	}
 	public void go(){
 		try{
-			s=new Socket("139.199.94.77", 8888);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
+			s=new Socket("127.0.0.1", 8888);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
 			InputStreamReader is=new InputStreamReader(s.getInputStream());			
 			br=new BufferedReader(is);
 			pw=new PrintWriter(s.getOutputStream());
@@ -142,7 +143,7 @@ public class Client {
 	public class incomingReader implements Runnable{
 		public void run() {
 			String message;             
-	           try {
+			try {
 	             while ((message = br.readLine()) != null) { 
 	            	//readline读到换行符才算读到一行,而且还需要flush()或close()。因为输入流缓冲区不满，他是不会接收到数据的
 	            	//System.out.println("read " + message);
