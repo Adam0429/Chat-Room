@@ -17,10 +17,18 @@ import java.util.Map.Entry;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 
 import javax.swing.JTextField;
+import javax.xml.soap.Text;
+
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 import javax.swing.JScrollBar;
+import javax.swing.JTextArea;
+import java.awt.List;
+import java.awt.TextArea;
 
 
 public class Server {
@@ -28,8 +36,8 @@ public class Server {
 	HashMap<String, PrintWriter> clientOutputStreams;
 	ArrayList<String> clients;
 	int count;
-	private static JTextField textField;
-	private JTextField textField_1;
+	JTextField textField_1;
+    TextArea textArea;
 	JFrame jf;
 	JPanel panel;
 	String IPlist;
@@ -51,62 +59,69 @@ public class Server {
 		panel.setLayout(null);
 		panel.add(b);
 		jf.getContentPane().add(BorderLayout.CENTER,panel);
-		
-		textField = new JTextField();
-		textField.setBounds(216, 43, 139, 239);
-		
-		panel.add(textField);
-		textField.setColumns(10);
 		JButton btnNewButton = new JButton("Kick");
 		btnNewButton.setBounds(31, 201, 139, 27);
 		panel.add(btnNewButton);
 		
 		textField_1 = new JTextField();
 		textField_1.setBounds(31, 151, 139, 24);
+		textArea = new TextArea();
+		textArea.setBounds(212, 33, 140, 252);
 		panel.add(textField_1);
 		textField_1.setColumns(10);
-		
-		JScrollBar scrollBar = new JScrollBar();
-		scrollBar.setBounds(312, 151, 21, 48);
-		panel.add(scrollBar);
 		
 		JLabel lblNewLabel = new JLabel("IP online");
 		lblNewLabel.setBounds(216, 13, 72, 18);
 		panel.add(lblNewLabel);
+		
+		
+		panel.add(textArea);
 		jf.setVisible(true);
 		jf.setSize(400, 342);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		count=0;
+		
 
 	}
-	public void go(){
-		clientOutputStreams = new HashMap<String, PrintWriter>();			
-		textField.setText("111");
-		System.out.println("s:"+textField.getText());		//明明有输入但是不显示在textfield上
+	
+	public void updatelist(){
+		Iterator<String> i = clients.iterator();
 
+		while(i.hasNext()){
+		
+			IPlist = IPlist + i.next()+'\n';
+	
+		}
+		System.out.println(IPlist);
+	}
+	
+	public void go(){
+
+		clientOutputStreams = new HashMap<String, PrintWriter>();			
 		try{
 			ServerSocket ss=new ServerSocket(8888);//ServerSocket会监听客户端对这台机器在8888端口上的要求
-
+			Socket s;
 			while(true){
-				Socket s=ss.accept();//accept会停下来等到要求到达才会继续.
+				s=ss.accept();//accept会停下来等到要求到达才会继续.
+				
+				
 				System.out.println("加进来了一个");
 				PrintWriter w=new PrintWriter(s.getOutputStream());
 				clientOutputStreams.put(s.getInetAddress().toString().split("/")[1],w);
-				clients.add(s.getInetAddress().toString().split("/")[1]);
 				//JOptionPane.showMessageDialog(null, "连接成功！");
 				w.println(s.getInetAddress().toString().split("/")[1]+"加入群聊");
 				w.flush();
-				HandleAClient hc = new HandleAClient(s);				Thread thread=new Thread(hc); 
+				HandleAClient hc = new HandleAClient(s);
+				clients.add(s.getInetAddress().toString().split("/")[1]);
+				updatelist();
+
+				textArea.setText(IPlist);
+				Thread thread=new Thread(hc); 
 				thread.start();//如果有新的socket加进来，就为其多开一个线程
-				Iterator<String> i = clients.iterator();
-
-				while(i.hasNext()){
-					IPlist = IPlist + i.next()+'\n';
-					System.out.println(IPlist);	
-					
-				}
-
+				
+				
 			}
+
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -116,11 +131,15 @@ public class Server {
 	public class blistener implements ActionListener{	
 		public void actionPerformed(ActionEvent e) {
 			go();
-			
 		}
 		
 	}
 	
+	public class blistener2 implements ActionListener{	
+		public void actionPerformed(ActionEvent e) {
+		}
+		
+	}
 
 		
 	
@@ -193,6 +212,9 @@ public class Server {
 		         catch(Exception ex) {
 		        	 ex.printStackTrace();
 		         }
+		    	 
+		    	 
+		
 //		    	 System.out.println(clients.s);
 //		    	 Iterator iterator=clients.iterator();
 //		    	 while (it.hasNext()) {
