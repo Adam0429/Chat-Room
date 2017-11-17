@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.PrimitiveIterator.OfDouble;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,6 +22,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import javax.swing.JTextField;
+import javax.swing.text.GapContent;
 import javax.xml.soap.Text;
 
 import org.omg.CORBA.PUBLIC_MEMBER;
@@ -55,12 +57,13 @@ public class Server {
 		panel=new JPanel();
 		b=new JButton("启动");
 		b.setBounds(42, 43, 63, 27);
-		b.addActionListener(new blistener());
+		b.addActionListener(new blistener2());
 		panel.setLayout(null);
 		panel.add(b);
 		jf.getContentPane().add(BorderLayout.CENTER,panel);
 		JButton btnNewButton = new JButton("Kick");
 		btnNewButton.setBounds(31, 201, 139, 27);
+		btnNewButton.addActionListener(new blistener());
 		panel.add(btnNewButton);
 		
 		textField_1 = new JTextField();
@@ -80,11 +83,12 @@ public class Server {
 		jf.setSize(400, 342);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		count=0;
-		
+		go();
 
 	}
 	
 	public void updatelist(){
+		IPlist = "";
 		Iterator<String> i = clients.iterator();
 
 		while(i.hasNext()){
@@ -92,7 +96,8 @@ public class Server {
 			IPlist = IPlist + i.next()+'\n';
 	
 		}
-		System.out.println(IPlist);
+		textArea.setText(IPlist);
+		
 	}
 	
 	public void go(){
@@ -104,21 +109,25 @@ public class Server {
 			while(true){
 				s=ss.accept();//accept会停下来等到要求到达才会继续.
 				
-				
 				System.out.println("加进来了一个");
 				PrintWriter w=new PrintWriter(s.getOutputStream());
-				clientOutputStreams.put(s.getInetAddress().toString().split("/")[1],w);
+				String ip = s.getInetAddress().toString().split("/")[1];
+				if(clients.contains(ip)){
+					System.out.println("已连入相同ip");	
+				}
+				else{
+				clientOutputStreams.put(ip,w);
 				//JOptionPane.showMessageDialog(null, "连接成功！");
-				w.println(s.getInetAddress().toString().split("/")[1]+"加入群聊");
+				tellEveryone(s.getInetAddress().toString().split("/")[1]+"加入群聊");
 				w.flush();
 				HandleAClient hc = new HandleAClient(s);
 				clients.add(s.getInetAddress().toString().split("/")[1]);
 				updatelist();
-
-				textArea.setText(IPlist);
+				tellonlinelist(IPlist);
+				tellEveryone("IPlist:"+IPlist);
 				Thread thread=new Thread(hc); 
 				thread.start();//如果有新的socket加进来，就为其多开一个线程
-				
+				}
 				
 			}
 
@@ -130,13 +139,24 @@ public class Server {
 	
 	public class blistener implements ActionListener{	
 		public void actionPerformed(ActionEvent e) {
-			go();
+			String ip = textField_1.getText();
+			PrintWriter p=clientOutputStreams.get(ip);
+			tellEveryone(ip+"被踢了");
+			p.close();
+			clientOutputStreams.remove(ip);
+			clients.remove(ip);
+			updatelist();
+			textArea.setText(IPlist);
+//			System.out.println(clients.size());
+			tellonlinelist(IPlist);
+			
 		}
 		
 	}
 	
 	public class blistener2 implements ActionListener{	
 		public void actionPerformed(ActionEvent e) {
+			tellEveryone("dsdadsa");
 		}
 		
 	}
@@ -205,25 +225,30 @@ public class Server {
 		    	 try {
 		             Entry entry = (Entry)it.next();
 		             PrintWriter writer = new PrintWriter((PrintWriter) entry.getValue());//Java.io.PrintWriter 类打印格式化对象的表示到文本输出流。
-		             System.out.println(entry.getKey().toString());
 					 writer.println(message);
 		             writer.flush();
 		         }  
 		         catch(Exception ex) {
 		        	 ex.printStackTrace();
 		         }
-		    	 
-		    	 
-		
-//		    	 System.out.println(clients.s);
-//		    	 Iterator iterator=clients.iterator();
-//		    	 while (it.hasNext()) {
-//		    		 System.out.println(it.next());
-//		    		 
-//				}
+		     }
 		      
 		   } // end while
 		       
+		public void tellonlinelist(String iplist){
+			  Iterator it = clientOutputStreams.entrySet().iterator();		     
+			     while(it.hasNext()) {
+			    	 try {
+			             Entry entry = (Entry)it.next();
+			             PrintWriter writer = new PrintWriter((PrintWriter) entry.getValue());//Java.io.PrintWriter 类打印格式化对象的表示到文本输出流。
+						 writer.println("IPlist:"+IPlist);
+			             writer.flush();
+			         }  
+			         catch(Exception ex) {
+			        	 ex.printStackTrace();
+			         }
+			
+		}
 		   // close tellEveryone
 	}
 }

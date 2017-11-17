@@ -35,6 +35,7 @@ public class Client {
 	BufferedReader br;
 	PrintWriter pw;
 	Socket s;
+	String Serverip;
 	private JTextField tf2;
 	private JTextField textField_1;
 	public static void main(String[] Args){
@@ -72,7 +73,7 @@ public class Client {
 		f.getContentPane().add(tf2);
 		
 		textField_1 = new JTextField();
-		textField_1.setText("192.168.1.1");
+		textField_1.setText("无用户");
 		textField_1.setBounds(306, 50, 112, 238);
 		f.getContentPane().add(textField_1);
 		textField_1.setColumns(10);
@@ -88,8 +89,9 @@ public class Client {
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	public void go(){
+		Serverip = "127.0.0.1";
 		try{
-			s=new Socket("127.0.0.1", 8888);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
+			s=new Socket(Serverip, 8888);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
 			InputStreamReader is=new InputStreamReader(s.getInputStream());			
 			br=new BufferedReader(is);
 			pw=new PrintWriter(s.getOutputStream());
@@ -147,11 +149,19 @@ public class Client {
 	             while ((message = br.readLine()) != null) { 
 	            	//readline读到换行符才算读到一行,而且还需要flush()或close()。因为输入流缓冲区不满，他是不会接收到数据的
 	            	//System.out.println("read " + message);
-	                ta.append(message + "\n");
-	                int height=15;								//自动换行
-	                Point p = new Point();
-	                p.setLocation(0,ta.getLineCount()*height);
-	                qScroller.getViewport().setViewPosition(p);
+	            	if(message.contains("IPlist")){
+	            		System.out.println(message);
+
+	            		String iplist = message.replace("127.0.0.1",Serverip);
+	            		textField_1.setText(iplist);
+	            	}
+	            	else{
+	            		ta.append(message + "\n");
+	                	int height=15;								//自动换行
+	                	Point p = new Point();
+	                	p.setLocation(0,ta.getLineCount()*height);
+	                	qScroller.getViewport().setViewPosition(p);
+	            	}
 	             }
 	           }
 	           catch(Exception e) {
