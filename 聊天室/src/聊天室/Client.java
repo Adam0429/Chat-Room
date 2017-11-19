@@ -75,8 +75,9 @@ public class Client {
 					pw.println("[STOP]");
 					pw.println(name+" close connection");
 					pw.flush();
+					if(!s.isClosed())
+						JOptionPane.showMessageDialog(null, "close connection");
 					s.close();
-					JOptionPane.showMessageDialog(null, "close connection");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -114,7 +115,7 @@ public class Client {
 	}
 	public void go(){
 		try{
-			s = new Socket("localhost", 8888);//这里是要获取与服务器端口的连接，所以要先运行服务器程序	
+			s = new Socket("localhost", 8888);//use to connect server with port
 			InputStreamReader is = new InputStreamReader(s.getInputStream());			
 			br = new BufferedReader(is);
 			pw = new PrintWriter(s.getOutputStream());
@@ -138,7 +139,7 @@ public class Client {
 				pw.println(name+" say:"+string);
 				pw.flush();
 				tf.setText("");
-				tf.requestFocus();//光标进入这个控件中
+				tf.requestFocus();//cusor enter this
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -154,7 +155,7 @@ public class Client {
 	             while ((message = br.readLine()) != null) { 
 	            	//readline读到换行符才算读到一行,而且还需要flush()或close()。因为输入流缓冲区不满，他是不会接收到数据的
 	            	//System.out.println("read " + message);
-	            	if(message.contains("[Give name]:")){
+	            	if(message.contains("[Give name]:")){		//get its name from server 
 	            		name = message.split(":")[1];
 	            		ta.append("My name is:"+name+"\n");
 	            	}

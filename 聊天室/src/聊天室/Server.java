@@ -26,13 +26,13 @@ import 聊天室.Server.Clientinfo;
 import javax.swing.JLabel;
 
 public class Server {
-	HashMap<String,Clientinfo> clients;
-	String IPlist;
-	int number;
-	class Clientinfo{
+	HashMap<String,Clientinfo> clients;				//Use to manage the clients,also can use Arraylist,btu hashmap is more easily to get cilents'information
+	String IPlist;	//the list store Clients 
+	int number;	//clients index
+	class Clientinfo{//it is not a client class , beacuse if i use client class,every time i new a client ,it will use the main method in client.
 		String name;
-		String Stats;
-		PrintWriter pw;
+		String Stats;		//store stats
+		PrintWriter pw;		
 		Socket socket; //use to check who are you
 		public Clientinfo(String n ,String st,PrintWriter p,Socket s){
 			name = n;
@@ -66,23 +66,23 @@ public class Server {
 	public void go(){
 		clients = new HashMap<String,Clientinfo>();
 		try{
-			ServerSocket ss = new ServerSocket(8888);//ServerSocket会监听客户端对这台机器在8888端口上的要求
+			ServerSocket ss = new ServerSocket(8888);//ServerSocket will listen to the require in port 8888
 			while(true){
 				Socket s = ss.accept();//accept会停下来等到要求到达才会继续.
 				Clientinfo client = new Clientinfo("Client"+number,"",new PrintWriter(s.getOutputStream()),s);
 				clients.put("Client"+number,client);
 				updateiplist();
-				tellEveryone("Client"+number+"加入群聊");
+				tellEveryone("Client"+number+" come in! ");
 				givename(client);
-				Thread thread = new Thread(new HandleAClient(client)); 
-				thread.start();//如果有新的socket加进来，就为其多开一个线程
+				Thread thread = new Thread(new HandleAClient(client)); // if has new client , make a thread to listen to it
+				thread.start();
 			}
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
 	}
-	public void givename(Clientinfo c){
+	public void givename(Clientinfo c){	
 		PrintWriter pw = c.pw;
 		pw.println("[Give name]:"+"Client"+number);
 		number++;
@@ -105,41 +105,41 @@ public class Server {
 		    }
 	}
 
-	public String from(Socket s){
-		Iterator it = clients.entrySet().iterator();
-		    
-		    while(it.hasNext()) {
-		        try {
-		        	
-		        	Entry entry = (Entry) it.next();
-		        	Socket socket = ((Clientinfo)entry.getValue()).socket;
-		            if(socket == s)
-		            	return ((Clientinfo)entry.getValue()).name;	            
-		        }  
-		        catch(Exception ex) {
-		        	ex.printStackTrace();
-		         }
-		    }
-			return null;
-
-		}
+//	public String from(Socket s){
+//		Iterator it = clients.entrySet().iterator();
+//		    
+//		    while(it.hasNext()) {
+//		        try {
+//		        	
+//		        	Entry entry = (Entry) it.next();
+//		        	Socket socket = ((Clientinfo)entry.getValue()).socket;
+//		            if(socket == s)
+//		            	return ((Clientinfo)entry.getValue()).name;	            
+//		        }  
+//		        catch(Exception ex) {
+//		        	ex.printStackTrace();
+//		         }
+//		    }
+//			return null;
+//
+//		}
 	
-	public void tellEveryone(String message) {
+	public void tellEveryone(String message) {		//tell all clients
 	      Iterator it = clients.entrySet().iterator();
 	      while(it.hasNext()) {
 	        try {
 	        	Entry entry = (Entry) it.next();
-	        	PrintWriter writer = ((Clientinfo) entry.getValue()).pw;//Java.io.PrintWriter 类打印格式化对象的表示到文本输出流。
-	            writer.println(message);
+	        	PrintWriter writer = ((Clientinfo) entry.getValue()).pw;
+	            writer.println(message);//buffer need '\n' and flush(), or it can not really receive message
 	            writer.flush();
 	        }  
 	        catch(Exception ex) {
 	        	ex.printStackTrace();
 	         }
 	      
-	       } // end while
+	       }
 	       
-	   } // close tellEveryone
+	   } 
 	
 	public class HandleAClient implements Runnable{
 		Socket s;//use this to find the client 
@@ -158,10 +158,9 @@ public class Server {
 				e.printStackTrace();
 			}
 		}
-		public void run() {
+		public void run() {				//deal with the message and command
 			String message;
 			try{
-				//bufferedreader类的必须要回车和flush或close才能接受
 
 				while((message=br.readLine())!=null){
 					if(message.contains("[STOP]")){
